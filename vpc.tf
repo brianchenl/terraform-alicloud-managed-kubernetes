@@ -14,7 +14,7 @@ data "alicloud_zones" "default" {
 resource "alicloud_vpc" "new" {
   count      = var.new_vpc == true ? 1 : 0
   cidr_block = var.vpc_cidr
-  name       = local.new_vpc_name
+  vpc_name   = local.new_vpc_name
   tags       = local.new_vpc_tags
 }
 
@@ -23,16 +23,16 @@ resource "alicloud_vswitch" "new" {
   count             = var.new_vpc == true ? length(var.vswitch_cidrs) : 0
   vpc_id            = concat(alicloud_vpc.new.*.id, [""])[0]
   cidr_block        = var.vswitch_cidrs[count.index]
-  availability_zone = length(var.availability_zones) > 0 ? element(var.availability_zones, count.index) : element(data.alicloud_zones.default.ids.*, count.index)
-  name              = local.new_vpc_name
+  zone_id           = length(var.availability_zones) > 0 ? element(var.availability_zones, count.index) : element(data.alicloud_zones.default.ids.*, count.index)
+  vswitch_name 	    = local.new_vpc_name
   tags              = local.new_vpc_tags
 }
 
 resource "alicloud_nat_gateway" "new" {
-  count  = var.new_vpc == true ? 1 : 0
-  vpc_id = concat(alicloud_vpc.new.*.id, [""])[0]
-  name   = local.new_vpc_name
-  //  tags   = local.new_vpc_tags
+  count        = var.new_vpc == true ? 1 : 0
+  vpc_id       = concat(alicloud_vpc.new.*.id, [""])[0]
+  address_name = local.new_vpc_name
+  nat_type     = "Enhanced"
 }
 
 resource "alicloud_eip" "new" {
