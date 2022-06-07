@@ -29,17 +29,17 @@ resource "alicloud_vswitch" "new" {
 }
 
 resource "alicloud_nat_gateway" "new" {
-  count        = var.new_vpc == true ? 1 : 0
-  vpc_id       = concat(alicloud_vpc.new.*.id, [""])[0]
-  address_name = local.new_vpc_name
-  nat_type     = "Enhanced"
+  count    = var.new_vpc == true ? 1 : 0
+  vpc_id   = concat(alicloud_vpc.new.*.id, [""])[0]
+  name     = local.new_vpc_name
+  nat_type = "Enhanced"
 }
 
 resource "alicloud_eip" "new" {
-  count     = var.new_vpc == true ? 1 : 0
-  bandwidth = var.new_eip_bandwidth
-  name      = local.new_vpc_name
-  tags      = local.new_vpc_tags
+  count        = var.new_vpc == true ? 1 : 0
+  bandwidth    = var.new_eip_bandwidth
+  address_name = local.new_vpc_name
+  tags         = local.new_vpc_tags
 }
 
 resource "alicloud_eip_association" "new" {
